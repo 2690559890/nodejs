@@ -49,6 +49,16 @@ class TableModel extends Model {
     }
 
     /**
+     * 删除表
+     * @param  string $tname 表名
+     * @return integer       注册结果
+     */
+    public function DelTable($tname){
+        $sql = "DROP TABLE $tname;";
+        return M()->execute($sql);
+    }
+
+    /**
      * 获取单挑数据
      * @param  string $tableName 表名
      * @param  boole $id 编号

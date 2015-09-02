@@ -28,9 +28,9 @@ class DbModel extends Model{
 
 	/**
 	 * 注册一个新表
-	 * @param  string $tname 表名
-	 * @param  string $tnamec 别称
-	 * @return integer 注册结果
+	 * @param  $tname 表名
+	 * @param  $tnamec 别称
+	 * @return 注册结果
 	 */
 	public function InsertDb($tname,$tnamec){
 		$data = array(
@@ -45,6 +45,28 @@ class DbModel extends Model{
 		} else {
 			return $this->getError(); //错误详情见自动验证注释
 		}
+	}
+
+	/**
+	 * 获取DB内容
+	 * @param  $tid 编号
+	 * @return 结果
+	 */
+	public function GetDBForID($tid){
+		$where = array('tid' => $tid);
+		return $this->where($where)->field('tid,tname,tflag,tnamec,ttype')->find();
+	}
+
+	/**
+	 * 更新DB内容
+	 * @param  $tid 编号
+	 * @param  $tnamec 别称
+	 * @return 结果
+	 */
+	public function UpDBTnamec($tid,$tnamec){
+		$data['tid'] = $tid;
+		$data['tname'] = $tnamec;
+		$User->save($data);
 	}
 
 	/**

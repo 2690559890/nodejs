@@ -27,14 +27,10 @@ class ConfigController extends AdminController {
      */
     public function add(){
         if(IS_POST){
-
             $Db = new DbApi();
-
             $tname = I('post.tname');
             $tnamec= I('post.tnamec');
-
             $cellArray=array();
-
             //获取表字段
             for ($i=0; $i < I('post.dbcellindex'); $i++) { 
                 $cell=array(
@@ -56,12 +52,9 @@ class ConfigController extends AdminController {
                 $this->error($Config->getError());
             }
         } else {
-            
             $this->meta_title = '新增配置';
 			
             $Db = new DbApi();
-
-			$this->assign('info',null);
 
 			//共享表
             $this->assign('sharetable',$Db->Get_Share());
@@ -70,9 +63,52 @@ class ConfigController extends AdminController {
             $this->assign('dicttable',$Db->Get_Dict());
 
 
-            $this->display('edit');
+            $this->display('add');
         }
     }
+
+
+    public function edit(){
+        $tid=I('id');
+        if(IS_POST){
+            $Db = new DbApi();
+            $tname = I('post.tname');
+            $tnamec= I('post.tnamec');
+            $cellArray=array();
+            //获取表字段
+            for ($i=0; $i < I('post.dbcellindex'); $i++) { 
+                $cell=array(
+                    'tname'=>I('tname'.($i+1)),
+                    'cname'=>I('cname'.($i+1)),
+                    'tcd'=>I('tcd'.($i+1)),
+                    'ttype'=>I('ttype'.($i+1)),
+                    );
+                $cellArray[]=$cell;
+            }
+            if($cellArray){
+                if($Db->CreateApi($tname,$tnamec,$cellArray)){
+                    S('DB_CONFIG_DATA',null);
+                    $this->success('新增成功', U('index'));
+                } else {
+                    $this->error('新增失败');
+                }
+            } else {
+                $this->error($Config->getError());
+            }
+            
+        }else{
+            $this->meta_title = '编辑配置';
+
+            $Db = new DbApi();
+
+            $this->assign('info',$Db->GetDBModelForTid($tid));
+
+            $this->assign("cell",$Db->GetColumnFortid($tid));
+
+            $this->display();
+        }
+    }
+
 
     /**
      * 显示表字段
@@ -106,7 +142,6 @@ class ConfigController extends AdminController {
         $this->display();
     }
 
-	
     /**
      * 添加编辑视图
      * 获取tid

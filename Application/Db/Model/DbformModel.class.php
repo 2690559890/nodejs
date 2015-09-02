@@ -65,6 +65,27 @@ class DbformModel extends Model{
 			return $this->getError(); //错误详情见自动验证注释
 		}
 	}
+
+	/**
+	 *更新DBForm视图
+	 *@param $dbForm 试图内容
+	 *@param $tid    表id
+	 *@return $list  对应视图
+	 */
+	public function UpdateDbFormForTid($dbForm,$vid){
+		$data = array(
+			'vname' => $dbForm[0]
+		);
+
+		/* 添加DBForm */
+		if($this->create($data)){
+			$vid = $this->where('vid='.,$vid)->save();
+			return $vid ? $vid : 0; //0-未知错误，大于0-成功
+		} else {
+			return $this->getError(); //错误详情见自动验证注释
+		}
+	}
+
 	/**
 	 *查询DBForm视图
 	 *@param $tid 'tid'

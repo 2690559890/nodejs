@@ -78,7 +78,81 @@ class DbApi extends Api{
         }
     }
 
-	
+    /**
+     * 删除表
+     * @param  int $tid 表编号
+     * @param  int $tname 表名
+     * @return integer  删除结果
+     */
+    public function DeleteApi($tid,$tname,$tnamec,$cellArray){
+        if ($tid) {
+            //创建s_db表数据
+            $dbmodel = new DbModel();
+            $dbmodel->startTrans();
+
+            $dbmodel->UpDBTnamec($tid,$tnamec);//更新表信息
+
+            //创建视图s_dbform
+            $dbForm = array($tnamec.'-默认视图');
+            $dbform = new DbformModel();
+            $dbform_list = $dbform->GetDBFormList($tid);
+            foreach ($dbform_list as $key => $value) {
+                if (strstr($value["vname"],"-默认视图")) {
+                    $dbform->UpdateDbFormForTid($dbForm,$tid);//修改视图信息
+                }
+            }
+            
+
+            $dbcell = new DbcellModel();
+            $db_num = $dbcell->DeleteDbCell($tid);
+
+            $vcell = new VDbcellModel();
+            $vc_num = $vcell->DeleteVDbCell($tid);
+
+            $dbtable = new TableModel();
+            $dbt_num = $dbtable->DelTable();
+
+            if ($db_num>0 & $vc_num>0 & $dbtable>0) {
+                
+                $dbcell=new DbcellModel();
+                
+                $dbcellret = $dbcell->InsertDbcell($tid,$cellArray);//创建字段信息
+
+                if ($dbcellret) {
+                    $vcell=new VDbcellModel();
+                    $result = $vcell->InsertVDbcell($formId,$tid,$cellArray);//创建关联字段信息
+
+                    if ($result) {
+
+                        $dbtable=new TableModel();
+                        $create_result = $dbtable->CreateTable($tname,$cellArray);//创建物理表
+
+                        if ($create_result) {//都确定完成，提交所有数据操作
+                            $dbmodel->commit(); 
+                            return true;
+                        }else{
+                            $dbmodel->rollback(); 
+                            return false;
+                        }
+                    } else {
+                        $dbmodel->rollback(); 
+                        return false;
+                    }
+                }else{
+                    $dbmodel->rollback(); 
+                    return false;
+                }
+            }else{
+                $dbmodel->rollback(); 
+                return false;
+            }
+
+        }else{
+            $dbmodel->rollback(); 
+            return false;
+        }
+    }
+
     /**
      * 创建视图
      */
@@ -254,9 +328,19 @@ class DbApi extends Api{
     }
 
     /**
-     * 获取视图列表
+     * 获取DBModel
+     * @param int tid
+     * @return array
+     */
+    public function GetDBModelForTid($tid){
+        $dbmodel =new DbModel();
+        return $dbid=$dbmodel->GetDBForID($tid);
+    }
+    
+    /**
+     * 获取DBForm视图列表
      * @param $tid 'tid'
-     *@return $list 对应视图
+     * @return $list 对应视图
      */
     public function GetTableView($tid){
         $db=new DbformModel();
@@ -265,7 +349,7 @@ class DbApi extends Api{
     }
 
     /**
-     * 获取视图列表
+     * 获取DBForm视图列表
      * @param $vid 'vid'
      *@return $list 对应视图
      */
@@ -302,7 +386,7 @@ class DbApi extends Api{
     }
 
     /**
-     * 通过$vid获取列名
+     * 通过$vid获取VDbcell列名
      */
     public function GetColumnForVid($vid){
 

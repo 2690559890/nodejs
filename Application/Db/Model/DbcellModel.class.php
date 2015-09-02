@@ -80,4 +80,12 @@ class DbcellModel extends Model{
 
 		return $list;
 	}
+
+	/**
+	 * 通过tID删除数据
+	 * @param $tid 表ID
+	 */
+	public function DeleteDbCell($tid){
+		return $User->where('tid='.$tid)->delete();
+	}
 }

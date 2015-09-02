@@ -119,4 +119,12 @@ class VDbcellModel extends Model{
 		$map['vid'] = $vid;
 		return $this->where($map)->delete();
 	}
+
+	/**
+	 * 通过tID删除数据
+	 * @param $tid 表ID
+	 */
+	public function DeleteVDbCell($tid){
+		return $User->where('tid='.$tid)->delete();
+	}
 }
