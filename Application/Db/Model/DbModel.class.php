@@ -65,8 +65,8 @@ class DbModel extends Model{
 	 */
 	public function UpDBTnamec($tid,$tnamec){
 		$data['tid'] = $tid;
-		$data['tname'] = $tnamec;
-		$User->save($data);
+		$data['tnamec'] = $tnamec;
+		$this->save($data);
 	}
 
 	/**

@@ -84,12 +84,12 @@ class DbApi extends Api{
      * @param  int $tname 表名
      * @return integer  删除结果
      */
-    public function DeleteApi($tid,$tname,$tnamec,$cellArray){
-        if ($tid) {
-            //创建s_db表数据
-            $dbmodel = new DbModel();
-            $dbmodel->startTrans();
+    public function UpdateApi($tid,$tname,$tnamec,$cellArray){
+        //创建s_db表数据
+        $dbmodel = new DbModel();
+        $dbmodel->startTrans();
 
+        if ($tid) {
             $dbmodel->UpDBTnamec($tid,$tnamec);//更新表信息
 
             //创建视图s_dbform
@@ -99,25 +99,22 @@ class DbApi extends Api{
             foreach ($dbform_list as $key => $value) {
                 if (strstr($value["vname"],"-默认视图")) {
                     $dbform->UpdateDbFormForTid($dbForm,$tid);//修改视图信息
+                    $formId = $value["vid"];
                 }
             }
-            
+            if ($formId) {
+                $dbcell = new DbcellModel();
+                $db_num = $dbcell->DeleteDbCell($tid);
 
-            $dbcell = new DbcellModel();
-            $db_num = $dbcell->DeleteDbCell($tid);
+                $vcell = new VDbcellModel();
+                $vc_num = $vcell->DeleteVDbCell($tid);
 
-            $vcell = new VDbcellModel();
-            $vc_num = $vcell->DeleteVDbCell($tid);
+                $dbtable = new TableModel();
+                $dbt_num = $dbtable->DelTable($tname);
 
-            $dbtable = new TableModel();
-            $dbt_num = $dbtable->DelTable();
-
-            if ($db_num>0 & $vc_num>0 & $dbtable>0) {
-                
                 $dbcell=new DbcellModel();
                 
                 $dbcellret = $dbcell->InsertDbcell($tid,$cellArray);//创建字段信息
-
                 if ($dbcellret) {
                     $vcell=new VDbcellModel();
                     $result = $vcell->InsertVDbcell($formId,$tid,$cellArray);//创建关联字段信息
@@ -146,7 +143,6 @@ class DbApi extends Api{
                 $dbmodel->rollback(); 
                 return false;
             }
-
         }else{
             $dbmodel->rollback(); 
             return false;

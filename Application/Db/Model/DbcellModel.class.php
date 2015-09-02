@@ -86,6 +86,6 @@ class DbcellModel extends Model{
 	 * @param $tid 表ID
 	 */
 	public function DeleteDbCell($tid){
-		return $User->where('tid='.$tid)->delete();
+		return $this->where('tid='.$tid)->delete();
 	}
 }

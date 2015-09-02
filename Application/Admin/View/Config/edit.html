@@ -4,12 +4,13 @@
 	<div class="main-title">
 		<h2>{$info['tid']?'编辑':'新增'}表</h2>
 	</div>
-	<form action="{:U()}" method="post" class="form-horizontal">
-	    <input type="hidden" name="dbcellindex" value="1" />
+	<form action="{:U()}" method="post" class="form-horizontal" id="editform">
+	    <input type="hidden" name="dbcellindex" value="{$cellcount}" />
+	    <input type="hidden" name="id" value="{$info.tid}" />
 		<div class="form-item">
 			<label class="item-label">表名<span class="check-tips">（只能使用英文且不能重复）</span></label>
 			<div class="controls">
-				<input type="text" class="text input-large" name="tname" disabled value="{$info.tname|default='y_'}">
+				<input type="text" class="text input-large" name="tname" readonly="readonly" value="{$info.tname|default='y_'}">
 			</div>
 		</div>
 		<div class="form-item">
@@ -155,6 +156,20 @@
 
 <block name="script">
 	<script type="text/javascript">
+		$(function(){
+			$("#editform").submit(function(e){
+				layer.open({
+				    content: '你是想确认呢，还是想取消呢？',
+				    btn: ['确认', '取消'],
+				    shadeClose: false,
+				    yes: function(){
+				    	return true;
+				    }, no: function(){
+				    	return false;
+				    }
+				});
+			});
+		})
 
 		//导航高亮
 		highlight_subnav('{:U('Config/index')}');

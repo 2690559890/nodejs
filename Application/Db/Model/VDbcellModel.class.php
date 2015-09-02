@@ -125,6 +125,6 @@ class VDbcellModel extends Model{
 	 * @param $tid 表ID
 	 */
 	public function DeleteVDbCell($tid){
-		return $User->where('tid='.$tid)->delete();
+		return $this->where('tid='.$tid)->delete();
 	}
 }

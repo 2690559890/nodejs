@@ -86,7 +86,7 @@ class ConfigController extends AdminController {
                 $cellArray[]=$cell;
             }
             if($cellArray){
-                if($Db->CreateApi($tname,$tnamec,$cellArray)){
+                if($Db->UpdateApi($tid,$tname,$tnamec,$cellArray)){
                     S('DB_CONFIG_DATA',null);
                     $this->success('新增成功', U('index'));
                 } else {
@@ -103,7 +103,9 @@ class ConfigController extends AdminController {
 
             $this->assign('info',$Db->GetDBModelForTid($tid));
 
-            $this->assign("cell",$Db->GetColumnFortid($tid));
+            $cell = $Db->GetColumnFortid($tid);
+            $this->assign("cell",$cell);
+            $this->assign("cellcount",count($cell));
 
             $this->display();
         }

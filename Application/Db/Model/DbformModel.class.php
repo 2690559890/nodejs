@@ -79,7 +79,7 @@ class DbformModel extends Model{
 
 		/* 添加DBForm */
 		if($this->create($data)){
-			$vid = $this->where('vid='.,$vid)->save();
+			$vid = $this->where('vid='.$vid)->save();
 			return $vid ? $vid : 0; //0-未知错误，大于0-成功
 		} else {
 			return $this->getError(); //错误详情见自动验证注释
