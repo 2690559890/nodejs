@@ -8,23 +8,23 @@ class InstallController extends Controller{
 
     protected function _initialize(){
         if(Storage::has('./Data/install.lock')){
-            $this->error('ÒÑ¾­³É¹¦°²×°ÁËOneThink£¬Çë²»ÒªÖØ¸´°²×°!');
+            $this->error('å·²ç»æˆåŠŸå®‰è£…äº†OneThinkï¼Œè¯·ä¸è¦é‡å¤å®‰è£…!');
         }
     }
 
     public function step1(){
-    	session('error', false);
-    	
-        //»·¾³¼ì²â
+        session('error', false);
+        
+        //ç¯å¢ƒæ£€æµ‹
         $env = check_env();
 
-        //Ä¿Â¼ÎÄ¼ş¶ÁĞ´¼ì²â
+        //ç›®å½•æ–‡ä»¶è¯»å†™æ£€æµ‹
         if(IS_WRITE){
             $dirfile = check_dirfile();
             $this->assign('dirfile', $dirfile);
         }
 
-        //º¯Êı¼ì²â
+        //å‡½æ•°æ£€æµ‹
         $func = check_func();
 
         session('step', 1);
@@ -37,30 +37,30 @@ class InstallController extends Controller{
     public function step2($db = null, $admin = null,$tb=null){
         if(IS_POST){
 
-            //¼ì²â¹ÜÀíÔ±ĞÅÏ¢
+            //æ£€æµ‹ç®¡ç†å‘˜ä¿¡æ¯
             if(!is_array($admin) || empty($admin[0]) || empty($admin[1]) || empty($admin[3])){
-                $this->error('ÇëÌîĞ´ÍêÕû¹ÜÀíÔ±ĞÅÏ¢');
+                $this->error('è¯·å¡«å†™å®Œæ•´ç®¡ç†å‘˜ä¿¡æ¯');
             } else if($admin[1] != $admin[2]){
-                $this->error('È·ÈÏÃÜÂëºÍÃÜÂë²»Ò»ÖÂ');
+                $this->error('ç¡®è®¤å¯†ç å’Œå¯†ç ä¸ä¸€è‡´');
             } else {
                 $info = array();
                 list($info['username'], $info['password'], $info['repassword'], $info['email'])
                 = $admin;
-                //»º´æ¹ÜÀíÔ±ĞÅÏ¢
+                //ç¼“å­˜ç®¡ç†å‘˜ä¿¡æ¯
                 session('admin_info', $info);
             }
 
-            //¼ì²âÊı¾İ¿âÅäÖÃ
+            //æ£€æµ‹æ•°æ®åº“é…ç½®
             if(!is_array($db) || empty($db[0]) ||  empty($db[1]) || empty($db[2]) || empty($db[3])){
-                $this->error('ÇëÌîĞ´ÍêÕûµÄÊı¾İ¿âÅäÖÃ');
+                $this->error('è¯·å¡«å†™å®Œæ•´çš„æ•°æ®åº“é…ç½®');
             } else {
                 $DB = array();
                 list($DB['DB_TYPE'], $DB['DB_HOST'], $DB['DB_NAME'], $DB['DB_USER'], $DB['DB_PWD'],
                      $DB['DB_PORT']) = $db;
-                //»º´æÊı¾İ¿âÅäÖÃ
+                //ç¼“å­˜æ•°æ®åº“é…ç½®
                 session('db_config', $DB);
 
-                //´´½¨Êı¾İ¿â
+                //åˆ›å»ºæ•°æ®åº“
                 $dbname = $DB['DB_NAME'];
                 unset($DB['DB_NAME']);
                 $db  = Db::getInstance($DB);
@@ -69,11 +69,11 @@ class InstallController extends Controller{
             }
 
 
-            //Ìø×ªµ½Êı¾İ¿â°²×°Ò³Ãæ
+            //è·³è½¬åˆ°æ•°æ®åº“å®‰è£…é¡µé¢
             $this->redirect('step3');
         } else {
             
-            session('error') && $this->error('»·¾³¼ì²âÃ»ÓĞÍ¨¹ı£¬Çëµ÷Õû»·¾³ºóÖØÊÔ£¡');
+            session('error') && $this->error('ç¯å¢ƒæ£€æµ‹æ²¡æœ‰é€šè¿‡ï¼Œè¯·è°ƒæ•´ç¯å¢ƒåé‡è¯•ï¼');
 
             $step = session('step');
             if($step != 1 && $step != 2){
@@ -86,7 +86,7 @@ class InstallController extends Controller{
     }
 
     
-    //°²×°µÚÈı²½£¬°²×°Êı¾İ±í£¬´´½¨ÅäÖÃÎÄ¼ş
+    //å®‰è£…ç¬¬ä¸‰æ­¥ï¼Œå®‰è£…æ•°æ®è¡¨ï¼Œåˆ›å»ºé…ç½®æ–‡ä»¶
     public function step3(){
         if(session('step') != 2){
             $this->redirect('step2');
@@ -94,17 +94,17 @@ class InstallController extends Controller{
 
         $this->display();
 
-        //Á¬½ÓÊı¾İ¿â
+        //è¿æ¥æ•°æ®åº“
         $dbconfig = session('db_config');
         $db = Db::getInstance($dbconfig);
-        //´´½¨Êı¾İ±í
+        //åˆ›å»ºæ•°æ®è¡¨
         create_tables($db, $dbconfig['DB_PREFIX']);
-        //×¢²á´´Ê¼ÈËÕÊºÅ
+        //æ³¨å†Œåˆ›å§‹äººå¸å·
         $auth  = build_auth_key();
         $admin = session('admin_info');
         register_administrator($db, $dbconfig['DB_PREFIX'], $admin, $auth);
 
-        //´´½¨ÅäÖÃÎÄ¼ş
+        //åˆ›å»ºé…ç½®æ–‡ä»¶
         $conf   =   write_config($dbconfig, $auth);
         session('config_file',$conf);
 
